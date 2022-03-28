@@ -8,6 +8,6 @@ namespace DAL
 {
     public static class Configuration
     {
-        public static string ConnectionString { get => @"Data Source=XPS-13;Initial Catalog=Northwind;Integrated Security=True"; }
+        public static string ConnectionString { get => @"Data Source=DESKTOP;Initial Catalog=Northwind;Integrated Security=True"; }
     }
 }

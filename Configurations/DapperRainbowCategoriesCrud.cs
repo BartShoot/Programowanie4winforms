@@ -14,7 +14,7 @@ namespace DAL
     {
         public int CategoryID { get; set; }
         public string CategoryName { get; set; }
-        public string CategoryDescription { get; set; }
+        public string Description { get; set; }
     }
 
     public class NorthwindDatabase : Database<NorthwindDatabase>
@@ -26,7 +26,14 @@ namespace DAL
     {
         public int DeleteCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            var connectionString = Configuration.ConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
+                db.Categories.Delete(categoryId);
+            }
+
+            return 0;
         }
 
         public DataTable GetAllCategories()
@@ -36,7 +43,8 @@ namespace DAL
             {
                 var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
                 List<Category> categories = db.Categories.All().ToList();
-
+                //var sql = @"SELECT CategoryID as Id, CategoryName, Description FROM Categories";
+                //db.Query(sql);
                 DataTable table = new DataTable();
                 using (var reader = ObjectReader.Create(categories))
                 {
@@ -54,7 +62,16 @@ namespace DAL
 
         public int InsertCategory(string categoryName, string description)
         {
-            throw new NotImplementedException();
+            var connectionString = Configuration.ConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
+                db.Query(   "SET IDENTITY_INSERT Orders ON " +
+                            "INSERT INTO Categories(CategoryName, Description) VALUES(@categoryName, @description) " +
+                            "SET IDENTITY_INSERT Orders OFF", new { categoryName, description });
+                
+                return 0;
+            }
         }
 
         public int UpdateCategory(int categoryId, string categoryName, string description)

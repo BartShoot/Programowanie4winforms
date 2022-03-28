@@ -12,7 +12,7 @@ namespace lab2
         public Form1()
         {
             InitializeComponent();
-            _categoriesCrud = new DapperContribCategoriesCrud();
+            _categoriesCrud = new DapperRainbowCategoriesCrud();
         }
 
         private void Form1_Load(object sender, EventArgs e)
