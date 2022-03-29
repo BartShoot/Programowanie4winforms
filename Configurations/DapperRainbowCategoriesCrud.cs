@@ -30,7 +30,8 @@ namespace DAL
             using (var connection = new SqlConnection(connectionString))
             {
                 var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
-                db.Categories.Delete(categoryId);
+                db.Query(   "DELETE FROM Categories " +
+                            "WHERE CategoryID = @categoryId", new { categoryId });
             }
 
             return 0;
@@ -43,8 +44,6 @@ namespace DAL
             {
                 var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
                 List<Category> categories = db.Categories.All().ToList();
-                //var sql = @"SELECT CategoryID as Id, CategoryName, Description FROM Categories";
-                //db.Query(sql);
                 DataTable table = new DataTable();
                 using (var reader = ObjectReader.Create(categories))
                 {
@@ -76,7 +75,17 @@ namespace DAL
 
         public int UpdateCategory(int categoryId, string categoryName, string description)
         {
-            throw new NotImplementedException();
+            var connectionString = Configuration.ConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var db = NorthwindDatabase.Init(connection, commandTimeout: 2);
+                db.Query(   "UPDATE Categories" +
+                            "SET CategoryName = @categoryName, Description = @description" +
+                            "WHERE CategoryID = @categoryId" +
+                            "VALUES(@categoryName, @description, @categoryId)",
+                            new { categoryId, categoryName, description });
+                return 0;
+            }
         }
     }
 }
